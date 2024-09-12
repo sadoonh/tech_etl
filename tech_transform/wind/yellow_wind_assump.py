@@ -46,7 +46,7 @@ def wind_assumption_transformation(df, file_name):
                 if df[column].eq(search_string).any():
                     return column, df[column].count()
 
-    column_name, column_length = find_column_with_exact_string(df, 'S_A_1')
+    column_name, column_length = find_column_with_exact_string(df, 'W_A_1')
     df = df.iloc[:column_length,:]
 
     # Drop columns with >35% NaN values

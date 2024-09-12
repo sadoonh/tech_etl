@@ -49,13 +49,8 @@ def process_csv_files_in_order(directory, tech_type):
 
     # Apply transformations based on technology type
     if tech_type == 'solar':
-        # Transform Pre DataFrame
         pre_transformed, _ = transform_solar_pre(pre_df, pre_file, 'yellow_solar_pre')
-        
-        # Transform Assumption DataFrame, passing in pre_transformed as the second argument
         assump_transformed, _ = transform_solar_assump(assump_df, pre_transformed, assump_file, 'yellow_solar_assump')
-        
-        # Transform Model DataFrame, passing in assump_transformed as the second argument
         model_transformed = transform_solar_model(model_df, assump_transformed, model_file, 'yellow_solar_model')
 
     elif tech_type == 'battery':

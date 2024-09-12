@@ -15,7 +15,7 @@ def transform_battery_pre(df, file_name, table_name):
         # Pivot and flatten the transformed dataframe
         df_pivot = pre_pivot_and_flatten(transformed_df)
         
-        # Load the pivoted data to the database 
+        # Load the pivoted data to the database if table_name is provided 
         # load_df_to_db(df_pivot, table_name)
         
         # Return the transformed and pivoted dataframes

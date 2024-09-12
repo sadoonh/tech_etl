@@ -45,7 +45,7 @@ def convert_xlsx_files_in_directory(source_directory, archive_directory, process
         # If any sheet was processed, move the file to the archive directory
         if sheet_found:
             shutil.move(xlsx_file_path, os.path.join(archive_directory, filename))
-            print(f"({index}/{total_files}) Processed {filename} and moved to archive.")
+            print(f"({index}/{total_files}) Processed {filename}.")
 
 def convert_excel_to_csv(xlsx_file_path, sheet_name, processed_directory):
     # Get the base name of the Excel file without the extension
