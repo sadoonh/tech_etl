@@ -3,6 +3,7 @@ import os
 import hashlib
 from datetime import datetime
 import numpy as np
+from load import load_df_to_db
 
 # Main Transformation Function
 def transform_battery_assump(df, df_pre, file_name, table_name):
@@ -26,7 +27,14 @@ def transform_battery_assump(df, df_pre, file_name, table_name):
         df_pivot = assumption_pivot_and_flatten(transformed_df)
 
         # Load the pivoted data to the database
-        # load_df_to_db(df_pivot, table_name)
+        load_df_to_db(df_pivot, table_name)
+
+        # Define the relative path for the log CSV file
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))  # This gets the project root
+        log_csv_path = os.path.join(project_root, 'loaded_files', 'yellow_battery_assump_files.csv')
+        
+        # Log the successfully processed file name to the CSV file
+        log_processed_filename(file_name, log_csv_path)
 
         # Return both the transformed and pivoted DataFrames
         return transformed_df, df_pivot
@@ -337,3 +345,46 @@ def map_assumption_to_preestimation(df_assumption, df_preestimation, assump_uid_
     df_assumption['Preestimation_UID'] = df_assumption.apply(lambda row: map_uid(row['Assumption_UID'], row['File_Name']), axis=1)
     
     return df_assumption
+
+def log_processed_filename(file_name, log_csv_path):
+    """
+    Logs the processed file name to a CSV file, adding '.xlsx' to the filename.
+
+    Args:
+        file_name (str): The file name to log.
+        log_csv_path (str): The path to the CSV file where the file name will be logged.
+    """
+    try:
+        # Step 1: Strip the extension (e.g., .csv)
+        base_file_name = os.path.splitext(file_name)[0]
+
+        # Step 2: Remove '_Assump' or '_Assumption' from the base file name
+        base_file_name = base_file_name.replace('_Assump', '').replace('_Assumption', '')
+
+        # Step 3: Add '.xlsx' to the cleaned file name
+        processed_file_name = base_file_name + '.xlsx'
+
+        # Check if the log CSV file already exists
+        if os.path.exists(log_csv_path):
+            # Load the existing CSV file
+            log_df = pd.read_csv(log_csv_path)
+            # If the file name is already logged, do nothing
+            if processed_file_name in log_df['File_Name'].values:
+                print(f"{processed_file_name} is already logged.")
+                return
+        else:
+            # If the log file doesn't exist, create a new DataFrame
+            log_df = pd.DataFrame(columns=['File_Name'])
+
+        # Create a new DataFrame with the new file name
+        new_file_df = pd.DataFrame({'File_Name': [processed_file_name]})
+
+        # Append the new file name using pd.concat
+        log_df = pd.concat([log_df, new_file_df], ignore_index=True)
+
+        # Save the updated DataFrame back to the CSV file
+        log_df.to_csv(log_csv_path, index=False)
+        print(f"Appended {processed_file_name} to log CSV.")
+
+    except Exception as e:
+        print(f"Error logging file name {file_name}: {e}")
