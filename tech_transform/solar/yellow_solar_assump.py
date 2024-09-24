@@ -3,6 +3,7 @@ import os
 import hashlib
 from datetime import datetime
 import numpy as np
+from load import load_df_to_db
 
 # Main Transformation Function
 def transform_solar_assump(df, df_pre, file_name, table_name):
@@ -26,7 +27,7 @@ def transform_solar_assump(df, df_pre, file_name, table_name):
         df_pivot = assumption_pivot_and_flatten(transformed_df)
 
         # Load the pivoted data to the database
-        # load_df_to_db(df_pivot, table_name)
+        load_df_to_db(df_pivot, table_name)
 
         # Return both the transformed and pivoted DataFrames
         return transformed_df, df_pivot
